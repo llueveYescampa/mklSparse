@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <sys/time.h>
+#include <omp.h>
 #include "mkl_spblas.h"
 
 #include "real.h"
@@ -123,7 +124,14 @@ int main(int argc, char *argv[])
 
     gettimeofday(&tp,NULL);
     elapsed_time += (tp.tv_sec*1.0e6 + tp.tv_usec);
-    printf ("Total time was %f seconds, GFLOPS: %f\n", elapsed_time*1.0e-6, (2.0*nnz_global+3.0*n_global)*REP*1.0e-3/elapsed_time);
+    
+    int worldSize;
+    #pragma omp parallel 
+    {
+        worldSize=omp_get_num_threads();
+    } // end of parallel region //
+    
+    printf ("---> Time taken by  %d threads %f seconds, GFLOPS: %f\n", worldSize ,  elapsed_time*1.0e-6, (2.0*nnz_global+3.0*n_global)*REP*1.0e-3/elapsed_time);
 
     // Release matrix handle and deallocate matrix
     mkl_sparse_destroy ( csrA );
