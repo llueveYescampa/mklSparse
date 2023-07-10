@@ -44,7 +44,9 @@ void reader( int *n_global,
         // reading rows vector (n+1) values //
         if ( !fread(rows_Ptr, sizeof(int), (size_t) (*n_global+1), filePtr)) exit(0);
         
-        getRowsNnzPerProc(rowsPP, nnzPP,n_global,nnz_global, rows_Ptr);
+        //getRowsNnzPerProc(rowsPP, nnzPP,n_global,nnz_global, rows_Ptr);
+        rowsPP[0] = *n_global;
+        nnzPP[0] = *nnz_global;
         
         // forming on-proc columns per proc
         for (int i=0; i<worldSize; ++i) {
